@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.woniu.mybatis.mapper.CategoryMapper">
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into mall_category(name, navigation, sort, deleted)
+        values (#{name}, #{navigation}, #{sort}, #{deleted})
+    </insert>
+
+    <update id="update">
+        update mall_category
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="navigation!=null and navigation!=''">
+                navigation=#{navigation},
+            </if>
+            <if test="sort!=0">
+                sort=#{sort},
+            </if>
+            <if test="deleted!=null and deleted!=''">
+                deleted=#{deleted},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <select id="getById" resultType="Category">
+        select *
+        from mall_category
+        where id = #{id}
+    </select>
+    <select id="getByCondition" resultType="Category">
+        select *
+        from mall_category
+        <where>
+            <if test="name!=null and name!=''">
+                name=#{name}
+            </if>
+            <if test="navigation!=null and navigation!=''">
+                and navigation=#{navigation}
+            </if>
+            <if test="sort!=0">
+                and sort=#{sort}
+            </if>
+            <if test="deleted!=null and deleted!=''">
+                and deleted=#{deleted}
+            </if>
+        </where>
+    </select>
+    <select id="getByName" resultType="int">
+        select count(*) from mall_category where name=#{name}
+    </select>
+    <select id="getMaxSort" resultType="int">
+        select max(sort) from mall_category
+    </select>
+    <select id="getAll" resultType="category">
+        select * from mall_category
+    </select>
+</mapper>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.mybatis.mapper.UserMapper">
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into user (account, password, phone, email, gender, login_time, points, money, photo, status)
+        values (#{account}, #{password}, #{phone}, #{email}, #{gender}, now(), 0, #{money}, 'www.image.com',
+                #{status})
+    </insert>
+    <update id="update" parameterType="user">
+        update user
+        <set>
+            <if test="account!=null and account != ''">
+                account=#{account},
+            </if>
+            <if test="phone!=null and phone != ''">
+                phone=#{phone},
+            </if>
+            <if test="email!=null and email != ''">
+                email=#{email},
+            </if>
+            <if test="gender!=null and gender != ''">
+                gender=#{gender},
+            </if>
+            <if test="loginTime!=null and loginTime != ''">
+                login_time=#{loginTime},
+            </if>
+            <if test="points!=null and points!='' ">
+                points=#{points},
+            </if>
+            <if test="money!=null and money!='' ">
+                money=#{money},
+            </if>
+            <if test="photo!=null and photo != ''">
+                photo=#{photo},
+            </if>
+            <if test="status!=null and status != ''">
+                status=#{status}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="getById" resultType="user">
+        select u.*,u.login_time loginTime
+        from user u
+        where id = #{id}
+    </select>
+
+    <select id="getByCondition" resultType="user">
+        select u.*,u.login_time loginTime
+        from user u
+        <where>
+            <if test="account!=null and account != ''">
+                account=#{account}
+            </if>
+            <if test="phone!=null and phone != ''">
+                and phone=#{phone}
+            </if>
+            <if test="email!=null and email != ''">
+                and email=#{email}
+            </if>
+            <if test="gender!=null and gender != ''">
+                and gender=#{gender}
+            </if>
+            <if test="loginTime!=null and loginTime != ''">
+                and loginTime=#{loginTime}
+            </if>
+            <if test="points!=null and points!='' ">
+                and points=#{points}
+            </if>
+            <if test="money!=null and money!='' ">
+                and money=#{money}
+            </if>
+            <if test="photo!=null and photo != ''">
+                and photo=#{photo}
+            </if>
+            <if test="status!=null and status != ''">
+                and status=#{status}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByAEP" resultType="int">
+        select count(*)
+        from user
+        where ${column} = #{value}
+    </select>
+    
+    <select id="getByAccAndPas" resultType="user">
+        select u.*,u.login_time loginTime
+        from user u
+        where account=#{account} and password=#{password}
+    </select>
+</mapper>

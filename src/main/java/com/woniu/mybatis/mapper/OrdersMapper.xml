@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.mybatis.mapper.OrdersMapper">
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        insert into orders (no, user_id, order_time, total_money, people, address, phone, status)
+        values (#{no}, #{user.id}, now(), #{totalMoney}, #{people}, #{address}, #{phone}, #{status});
+    </insert>
+    <update id="update">
+        update orders
+        <set>
+            <if test="no!=null and no!=''">
+                no=#{no},
+            </if>
+            <if test="user!=null and user.id!=0">
+                user_id=#{user.id},
+            </if>
+            <if test="orderTime!=null and orderTime!=''">
+                order_time=#{orderTime},
+            </if>
+            <if test="totalMoney!=null and totalMoney!=''">
+                total_money=#{totalMoney},
+            </if>
+            <if test="people!=null and people!=''">
+                people=#{people},
+            </if>
+            <if test="address!=null and address!=''">
+                address=#{address},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone= #{phone},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone= #{phone},
+            </if>
+            <if test="status!=null and status!=''">
+                status=#{status}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateByIds">
+        update orders set status=#{status}
+        <where>
+            <foreach collection="ids" item="id" open="id in (" close=")" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </update>
+    <select id="getByCondition" resultMap="OrdersMap">
+        SELECT u.account, o.*
+        FROM orders o,
+        user u
+        WHERE o.user_id = u.id
+            <if test="no!=null and no!=''">and no=#{no}</if>
+            <if test="user!=null and user.id!=null">and user_id=#{user.id}</if>
+            <if test="orderTime!=null and orderTime!=''">and order_time=#{orderTime}</if>
+            <if test="totalMoney!=null and totalMoney!=''">and total_money=#{totalMoney}</if>
+            <if test="people!=null and people!=''">and people=#{people}</if>
+            <if test="address!=null and address!=''">and address=#{address}</if>
+            <if test="phone!=null and phone!=''">
+                <bind name="phone" value="'%' + phone + '%'"/>
+                and phone like #{phone}
+            </if>
+            <if test="status!=null and status!=''">and status=#{status}</if>
+    </select>
+
+    <select id="getById" resultMap="OrdersMap">
+        SELECT u.account, o.*
+        FROM orders o,
+             user u
+        WHERE o.user_id = u.id
+          AND o.id = #{id}
+    </select>
+    <resultMap id="OrdersMap" type="Orders">
+        <id column="id" property="id"/>
+        <result column="no" property="no"/>
+        <result column="order_time" property="orderTime"/>
+        <result column="total_money" property="totalMoney"/>
+        <result column="people" property="people"/>
+        <result column="address" property="address"/>
+        <result column="phone" property="phone"/>
+        <result column="status" property="status"/>
+        <association property="user">
+            <id column="user_id" property="id"/>
+            <result column="account" property="account"/>
+        </association>
+        <collection property="ordersItems" ofType="OrdersItem" fetchType="lazy" column="id"
+                    select="com.woniu.mybatis.mapper.OrdersItemMapper.getByOrdersId">
+        </collection>
+    </resultMap>
+</mapper>
